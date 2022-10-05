@@ -36,7 +36,7 @@ annotation <- getGenomeAndAnnotation(organism = "Danio rerio",
 index <- STAR.index(annotation)
 ## STEP 1B
 ## When data is published to read archive do this to get it:
-#study <- download.SRA.metadata("Insert_PRJID_Here")
+#study <- download.SRA.metadata("PRJEB55250")
 #download.SRA(study, conf["fastq RNA-seq"], rename = FALSE)
 
 ## STEP 2 (STAR alignment)
