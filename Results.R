@@ -98,7 +98,8 @@ ggsave(filename = file.path(QCfolder(df), "fig3_volcano.pdf"), volcano_plot, wid
 fig1_alt <- cowplot::plot_grid(plotlist = list(fig1, cowplot::plot_grid(plotlist = list(volcano_plot), labels = "D")),
                            ncol = 1, align = "v");fig1_alt
 ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc.pdf"), fig1_alt, width = 12, heigh = 12)
-ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc.png"), fig1_alt, width = 12, heigh = 12)
+ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc.png"), fig1_alt, width = 12, heigh = 12, dpi = 400)
+ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc_high.png"), fig1_alt, width = 10, heigh = 10, dpi = 400)
 
 fig1_alt <- cowplot::plot_grid(plotlist = list(fig1_a, heat_plot$gtable, plot, volcano_plot),
                                ncol = 2, align = "v", );fig1_alt
