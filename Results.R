@@ -1,20 +1,21 @@
 # Creating results (first run Alignment script!)
-
-## STEP 0 (Re-do for results)
 {
-  library(ORFik)
-  library(RiboCrypt)
-  library(data.table)
-  library(DESeq2)
-  library(ggplot2)
-  library(org.Dr.eg.db)
-  library(clusterProfiler)
-  library(ggrepel)
-  library(pheatmap)
+  ## STEP 0 (Load packages)
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  packages <- c("ORFik", "devtools","data.table", "DESeq2", "ggplot2", "org.Dr.eg.db", "clusterProfiler", "ggrepel", "pheatmap")
+  for (package in packages) {
+    if (!requireNamespace(package, quietly = TRUE)) {
+      BiocManager::install(package)
+    } else require(package, character.only = TRUE)
+  }
+  if (!requireNamespace("RiboCrypt", quietly = TRUE)) devtools::install_github("m-swirski/RiboCrypt")
+
+  ## STEP1 Directory setup
   conf <- config.exper(experiment = "Hassan_Danio_rerio",
                        type = "RNA-seq",
                        assembly = "Danio_rerio_GRCz11")
 }
+
 
 ## STEP 5 (QC)
 # Run non batch corrected correlation and pca
@@ -60,9 +61,9 @@ plot <- plotPCA(B_pca, intgroup=c("Condition")) + geom_point(size = 5) +
 ggsave(filename = file.path(QCfolder(df), "PCAplot_BatchCor_Hassan_Danio_rerio_RNA-seq.pdf"), plot)
 
 fig1 <- cowplot::plot_grid(plotlist = list(fig1_a,
-                                           cowplot::plot_grid(heat_plot$gtable, plot, ncol = 1, labels = c("B", "C"))),
+                                           cowplot::plot_grid(heat_plot$gtable, plot, ncol = 1, labels = c("B", "C"), label_size = 18)),
                            ncol = 2, align = "h", rel_heights = c(4,1), rel_widths = c(2,1),
-                           labels = c("A", NULL));fig1
+                           labels = c("A", NULL), label_size = 18);fig1
 ggsave(filename = file.path(QCfolder(df), "fig1_QC.pdf"), fig1, width = 12, heigh = 7)
 ggsave(filename = file.path(QCfolder(df), "fig1_QC.png"), fig1, width = 12, heigh = 7)
 # Without replicate in design
@@ -95,14 +96,14 @@ volcano_plot <- ggplot(DEG, aes(x = LFC, y = -log10(padj), label = symbols)) +
                   point.padding = 0.5,
                   segment.color = 'grey50'); volcano_plot
 ggsave(filename = file.path(QCfolder(df), "fig3_volcano.pdf"), volcano_plot, width = 8, heigh = 6)
-fig1_alt <- cowplot::plot_grid(plotlist = list(fig1, cowplot::plot_grid(plotlist = list(volcano_plot), labels = "D")),
+fig1_alt <- cowplot::plot_grid(plotlist = list(fig1, cowplot::plot_grid(plotlist = list(volcano_plot), labels = "D", label_size = 18)),
                            ncol = 1, align = "v");fig1_alt
 ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc.pdf"), fig1_alt, width = 12, heigh = 12)
 ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc.png"), fig1_alt, width = 12, heigh = 12, dpi = 400)
 ggsave(filename = file.path(QCfolder(df), "fig1_QC_volc_high.png"), fig1_alt, width = 10, heigh = 10, dpi = 400)
 
-fig1_alt <- cowplot::plot_grid(plotlist = list(fig1_a, heat_plot$gtable, plot, volcano_plot),
-                               ncol = 2, align = "v", );fig1_alt
+# fig1_alt <- cowplot::plot_grid(plotlist = list(fig1_a, heat_plot$gtable, plot, volcano_plot),
+#                                ncol = 2, align = "v", );fig1_alt
 # gridExtra::grid.arrange(arrangeGrob(fig1_a, left = textGrob("A", x = unit(1, "npc"),
 #                                                        y = unit(.95, "npc"))),
 #                    arrangeGrob(heat_plot$gtable, left = textGrob("B", x = unit(1, "npc"),
@@ -148,7 +149,7 @@ summary(res_deseq_rep_gene)
 summary(res_deseq_rep_gene_high)
 res_deseq_rep_gene_high["ENSDARG00000036155",]
 
-## STEP 10 (GO analysis)
+## STEP 10 (Initial investigative GO analysis)
 ## For GOrilla DB online:
 gorilla <- res_deseq_rep$log2FoldChange
 names(gorilla) <- txNamesToGeneNames(rownames(res_deseq_rep), df)

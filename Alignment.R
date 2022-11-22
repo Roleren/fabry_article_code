@@ -2,7 +2,8 @@
 # RNA-seq data analysis steps:
 # Organism: Danio rerio, samples 16
 # Author: Hassan
-# 0. Set directories
+# 0. Load libraries
+# 1. Set directories
 # 1A. Download annotation and create STAR genome index
 # 1B. Download read data
 # 2. Align with STAR (paired end reads)
@@ -15,20 +16,21 @@
 # 9. Run GSEA analysis (clusterProfiler)
 # 10. Run GO analysis (GOrilla, online tool)
 
-## STEP 0
 {
-library(ORFik)
-library(RiboCrypt)
-library(data.table)
-library(DESeq2)
-library(ggplot2)
-library(org.Dr.eg.db)
-library(clusterProfiler)
-library(ggrepel)
-library(pheatmap)
-conf <- config.exper(experiment = "Hassan_Danio_rerio",
-                     type = "RNA-seq",
-                     assembly = "Danio_rerio_GRCz11")
+  ## STEP 0 (Load packages)
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  packages <- c("ORFik", "devtools","data.table", "DESeq2", "ggplot2", "org.Dr.eg.db", "clusterProfiler", "ggrepel", "pheatmap")
+  for (package in packages) {
+    if (!requireNamespace(package, quietly = TRUE)) {
+      BiocManager::install(package)
+    } else require(package, character.only = TRUE)
+  }
+  if (!requireNamespace("RiboCrypt", quietly = TRUE)) devtools::install_github("m-swirski/RiboCrypt")
+
+  ## STEP1 Directory setup
+  conf <- config.exper(experiment = "Hassan_Danio_rerio",
+                       type = "RNA-seq",
+                       assembly = "Danio_rerio_GRCz11")
 }
 ## STEP 1A
 annotation <- getGenomeAndAnnotation(organism = "Danio rerio",
